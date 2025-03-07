@@ -21,7 +21,7 @@ const row = (bill) => {
 const rows = (data) => {
   if (data && data.length) {
     // Sort bills by date from most recent to oldest
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // data.sort((a, b) => new Date(b.date) - new Date(a.date));
     console.log(data);
 
     return data.map(bill => row(bill)).join("");
@@ -51,7 +51,7 @@ export default ({ data: bills, loading, error }) => {
   if (loading) {
     return LoadingPage()
   } else if (error) {
-    return ErrorPage(error)
+    return ErrorPage(error) // test error case
   }
 
   return (`
