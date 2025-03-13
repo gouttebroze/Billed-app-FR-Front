@@ -36,6 +36,7 @@ export default class {
         .list()
         .then(snapshot => {
           const bills = snapshot
+            .sort((a, b) => new Date(b.date) - new Date(a.date))  // <sort bills by date from most recent to oldest
             .map(doc => {
               try {
                 console.log('doc: ', doc);
