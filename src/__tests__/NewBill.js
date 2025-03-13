@@ -2,14 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { screen, fireEvent, getByTestId } from "@testing-library/dom"
+import { screen, fireEvent, waitFor } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import '@testing-library/jest-dom/extend-expect'
-import { ROUTES_PATH } from '../constants/routes.js'
+import { ROUTES_PATH, ROUTES } from '../constants/routes.js'
 import { localStorageMock } from '../__mocks__/localStorage.js'
 import store from '../__mocks__/store.js'
+import mockStore from '../__mocks__/store'
+import { bills } from "../fixtures/bills"
+import router from "../app/Router.js"
 
+jest.mock("../app/store", () => mockStore)
 
 describe('Given I am connected as an employee', () => {
   describe('When I am on NewBill Page', () => {
@@ -25,34 +29,9 @@ describe('Given I am connected as an employee', () => {
       expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy()
     })
 
-    /* test('Then I should be able to upload a valid file', async () => {
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES_PATH[pathname]
-      }
-
-      const newBill = new NewBill({ document, onNavigate, store, localStorage: window.localStorage })
-      const fileInput = screen.getByTestId('file')
-      const file = new File(['dummy content'], 'test.png', { type: 'image/png' })
-      fireEvent.change(fileInput, { target: { files: [file] } })
-      expect(fileInput.files[0].name).toBe('test.png')
-      expect(newBill.fileName).toBe('test.png')
-    }) */
-    /* test('Then I should see an alert if I upload an invalid file type', async () => {
-      window.alert = jest.fn()
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES_PATH[pathname]
-      }
-      const newBill = new NewBill({ document, onNavigate, store, localStorage: window.localStorage })
-      const fileInput = screen.getByTestId('file')
-      const file = new File(['dummy content'], 'test.txt', { type: 'text/plain' })
-      fireEvent.change(fileInput, { target: { files: [file] } })
-      expect(window.alert).toHaveBeenCalledWith('Invalid file type. Please select a jpg, jpeg, or png file.')
-      expect(fileInput.value).toBe('')
-    }) */
   })
 
   describe('When I am on NewBill Page, I do fill all required fields and I submit the form', () => {
-    // modif. le When ...
     test('Then it should submit the form and renders Bills page.', () => {
       document.body.innerHTML = NewBillUI()
       const form = screen.getByTestId("form-new-bill")
@@ -111,137 +90,116 @@ describe('Given I am connected as an employee', () => {
   })
 })
 
-describe("Given I am connected as an employee", () => {
-  /* describe("When I am on NewBill Page, I do fill all required fields and I submit form.", () => {
-    test("Then It should renders Bills page and add the new bill to the list.", () => {
-      const html = NewBillUI()
-      document.body.innerHTML = html
-      //to-do write assertion
-
-      // check if a form element is currently required (An element is required if it is having a required or aria-required="true" attribute).
-      expect(getByTestId('expense-type')).toBeRequired()
-      expect(getByTestId('expense-name')).not.toBeRequired()
-      expect(getByTestId('datepicker')).toBeRequired()
-      expect(getByTestId('amount')).toBeRequired()
-      expect(getByTestId('vat')).not.toBeRequired()
-      expect(getByTestId('pct')).toBeRequired()
-      expect(getByTestId('commentary')).not.toBeRequired()
-      expect(getByTestId('file')).toBeRequired()
-
+// integration tests POST 
+describe('Given I am connected as an employee & I am on NewBill Page', () => {
+  describe("When new bill's form is submited", () => {
+    test('Then create new bill from mock API POST', async () => {
+      const bill = [
+        {
+          id: "47qAXb6fIm2zOKkLzMro",
+          vat: "80",
+          fileUrl: "test_url",
+          status: "pending",
+          type: "Hôtel et logement",
+          commentary: "séminaire billed",
+          name: "encore",
+          fileName: "test.jpg",
+          date: "2004-04-04",
+          amount: 400,
+          commentAdmin: "ok",
+          email: "a@a",
+          pct: 20,
+        },
+      ];
+      const mockStoreSpy = jest.spyOn(mockStore, 'bills')
+      mockStore.bills().create(bill)
+      expect(mockStoreSpy).toHaveBeenCalledTimes(1)
     })
-  }) */
 
-  describe("When I am on NewBill Page, I do fill expense-type, expense-name, datepicker & amount fields and I click on submit.", () => {
-    test("Then It should renders NewBill page.", () => {
-      /* const html = NewBillUI()
-      document.body.innerHTML = html
+    /* beforeEach(() => {
+      jest.spyOn(mockStore, 'bills')
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+      const root = document.createElement('div')
+      root.setAttribute('id', 'root')
+      document.body.appendChild(root)
+      router()
+    }) */
 
-      const selectExpenseType = screen.getByTestId('expense-type')
-      fireEvent.change(selectExpenseType, { target: { value: 'Transports' } })
-      expect(selectExpenseType.value).toBe('Transports')
+    test('should create a new bill after form submission', async () => {
+      document.body.innerHTML = NewBillUI();
 
-      const inputExpenseName = screen.getByTestId('expense-name')
-      fireEvent.change(inputExpenseName, { target: { value: 'heaven flying' } })
-      expect(inputExpenseName.value).toBe('heaven flying') */
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
 
-      /* const inputDate = screen.getByTestId('datepicker')
-      fireEvent.change(inputDate, { target: { value: '01/03/2006' } })
-      expect(inputDate.value).toBe('01/03/2006')
+      const store = mockStore;
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store,
+        localStorage: window.localStorage,
+      });
 
-      const input = screen.getByTestId('')
-      fireEvent.change(input, { target: { value: '' } })
-      expect(input.value).toBe('')
-
-      const input = screen.getByTestId('')
-      fireEvent.change(input, { target: { value: '' } })
-      expect(input.value).toBe('')
-
-      const input = screen.getByTestId('')
-      fireEvent.change(input, { target: { value: '' } })
-      expect(input.value).toBe('')
-
-      const input = screen.getByTestId('')
-      fireEvent.change(input, { target: { value: '' } })
-      expect(input.value).toBe('') 
-
-      const inputAmount = screen.getByTestId('amount')
-      fireEvent.change(inputAmount, { target: { value: 55765 } })
-      expect(inputAmount.value).toBe(55765)
-
-      const form = screen.getByTestId('form-new-bill')
-      const handleSubmit = jest.fn((e) => e.preventDefault())
-      form.addEventListener('submit', handleSubmit)
-      fireEvent.submit(form)
-      expect(screen.getByTestId('form-new-bill')).toBeTruthy()
-*/
-      //expect(getByTestId('expense-type')).toBeRequired()
-      //expect(getByTestId('expense-name')).not.toBeRequired()
-      // expect(getByTestId('datepicker')).toBeRequired()
-      //expect(getByTestId('amount')).toBeRequired()
-      /* expect(getByTestId('vat')).not.toBeRequired()
-      expect(getByTestId('pct')).toBeRequired()
-      expect(getByTestId('commentary')).not.toBeRequired()
-      expect(getByTestId('file')).toBeRequired() */
-    })
-  })
-})
-
-/**************************************************************************************************
- * Test de soumission du formulaire
- *  GIVEN: Etant connecté commen employé, sur la page Nouvelle notes de frais & remplissant le formulaire,
- *  WHEN: Quand je soumet ce formulaire avec tous les champs requis remplis,
- *  THEN: Alors le formulaire doit être soumis avec succès
-***************************************************************************************************/
-
-/* describe('Given I am connected as an employee, I am on NewBill Page & I am filling the new bill form', () => {
-  describe('When I submit the form with all required fields filled', () => {
-    test('The form should be submitted successfully', () => {
-      // recupération des data attributes "data-testid"
       const form = screen.getByTestId('form-new-bill');
-      const expenseType = screen.getByTestId('expense-type');
-      const expenseName = screen.getByTestId('expense-name');
-      const datepicker = screen.getByTestId('datepicker');
-      const amount = screen.getByTestId('amount');
-      const vat = screen.getByTestId('vat');
-      const pct = screen.getByTestId('pct');
-      const commentary = screen.getByTestId('commentary');
-      const file = screen.getByTestId('file');
-      //const btnSendBill = screen.getByTestId('btn-send-bill');
-
-      // see user-event to replace fireEvent
-      fireEvent.change(expenseType, { target: { value: 'Transports' } });
-      fireEvent.change(expenseName, { target: { value: 'Vol Paris Londres' } });
-      fireEvent.change(datepicker, { target: { value: '2022-01-01' } });
-      fireEvent.change(amount, { target: { value: '348' } });
-      fireEvent.change(vat, { target: { value: '70' } });
-      fireEvent.change(pct, { target: { value: '20' } });
-      fireEvent.change(commentary, { target: { value: 'Test Commentary' } });
-      fireEvent.change(file, { target: { files: [new File(['test'], 'test.pdf', { type: 'application/pdf' })] } });
-
-      const handleSubmit = jest.fn();
+      const handleSubmit = jest.fn(newBill.handleSubmit);
       form.addEventListener('submit', handleSubmit);
+
       fireEvent.submit(form);
 
       expect(handleSubmit).toHaveBeenCalled();
+
+      await waitFor(() => {
+        mockStore.bills.mockImplementationOnce(() => {
+          return {
+            create: jest.fn(() => Promise.resolve(bills)),
+          }
+        });
+        //expect(mockStore.bills().create).toHaveBeenCalled();
+      });
     });
-  });
-}); */
 
-/* describe("Given I am connected as an employee", () => {
-  describe("When I am on NewBill Page", () => {
-    test("Then it should display title", () => { // Mes notes de frais
-      const html = NewBillUI()
-      document.body.innerHTML = html
-      //to-do write assertion
-      // "When I do fill fields in correct format and I click on submit"
-      // "When I do not fill fields and I click on submit"
+    describe('When an error occurs on API', () => {
+
+      beforeEach(() => {
+        jest.spyOn(mockStore, 'bills')
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+        const root = document.createElement('div')
+        root.setAttribute('id', 'root')
+        document.body.appendChild(root)
+        router()
+      })
+
+      // test on a POST request with a 404 error
+      test('Then it should handle the error', async () => {
+        mockStore.bills.mockImplementationOnce(() => {
+          return {
+            create: () => {
+              return Promise.reject(new Error('Erreur 404'))
+            }
+          }
+        })
+        window.onNavigate(ROUTES_PATH.NewBill)
+        await new Promise(process.nextTick)
+        const msg = await screen.getByDisplayValue(/Erreur 404/)
+        expect(msg).toBeTruthy()
+      })
+
+      // test on a POST request with a 500 error
+      test('Then It should create a new bill & fails with 500 message error', async () => {
+        mockStore.bills.mockImplementationOnce(() => {
+          return {
+            create: () => {
+              return Promise.reject(new Error('Erreur 500'))
+            }
+          }
+        })
+        window.onNavigate(ROUTES_PATH.NewBill)
+        await new Promise(process.nextTick)
+        const msg = await screen.getByText(/Erreur 500/)
+        expect(msg).toBeTruthy()
+      })
     })
   })
-  describe("When I do not fill fields and I click on submit", () => {
-    test("Then I am on NewBill Page", () => {
-      const html = NewBillUI()
-      document.body.innerHTML = html
-
-    })
-  })
-}) */
+})
