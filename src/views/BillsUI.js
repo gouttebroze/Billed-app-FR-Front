@@ -18,7 +18,7 @@ const row = (bill) => {
     `)
 }
 
-const rows = (data) => {
+/* const rows = (data) => {
   if (data && data.length) {
     // Sort bills by date from most recent to oldest
     // data.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -27,12 +27,21 @@ const rows = (data) => {
     return data.map(bill => row(bill)).join("");
   }
   return "";
-}
+} */
+const rows = data => {
+  debugger
+  return data && data.length
+    ? data
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .map(bill => row({
+        ...bill, date: bill.date,
+      })).join("") : "";
+};
 
 export default ({ data: bills, loading, error }) => {
 
   const modal = () => (`
-    <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div data-testid="modal-displayed-file" class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">

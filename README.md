@@ -92,3 +92,44 @@ mot de passe : admin
 utilisateur : employee@test.tld
 mot de passe : employee
 ```
+
+--------------------------------------------------------
+
+## NOTES
+
+### isDone
+
+* fix bug sur le trie des notes (imp ds dossible `./containers` & non `./views`)
+
+* tests unit & inte pr bills & NewBills
+
+* test GET pr BILLS
+
+* test POST pr NewBILLS
+
+* parcours Employé pr tests E2E
+
+### Liste termes utilisé par JEST
+
+* cadre test avec BDD: 
+   describe->Given-When-Then
+      -->test->It should...
+         ---> expect().to  // étant attendu("Valeurs à tester").to...(use a Jest matcher (methodes utilisé par Jest pr matcher le(s) valeurs attendues avec celles retournées))
+
+* expect, 
+* **Fonctions simulées**
+      
+      * voir doc.[Jest](https://jestjs.io/fr/docs/mock-functions)
+   
+      * *...permettent de tester les liens entre le code en effaçant l'implémentation réelle d'une fonction, en capturant les appels à la fonction (et les paramètres passés dans ces appels), en capturant les instances des fonctions constructrices lorsqu'elles sont instanciées avec new, et en permettant la configuration des valeurs de retour au moment du test*.
+
+      * *Il existe deux façons de simuler des fonctions* : 
+         - *soit en créant une fonction simulée à utiliser dans le code de test*, 
+         - *soit en écrivant une simulation manuelle pour remplacer une dépendance du module*.
+
+      * Utilisation d'une fonction simulée
+
+* objet Jest 
+
+### List ISSUES avec code correspondant
+

@@ -124,6 +124,7 @@ describe('Given I am connected as an Admin', () => {
     })
   })
 
+  // Test failed
   describe('When I am on Dashboard page and I click 2 times on edit icon of a card', () => {
     test('Then, big bill Icon should Appear', () => {
 
