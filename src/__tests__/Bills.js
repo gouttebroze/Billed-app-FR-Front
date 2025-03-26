@@ -107,14 +107,14 @@ describe("Given I am connected as an employee", () => {
   })
 
   describe('When I am on Bills page but it is loading', () => {
-    test('Then, Loading page should be rendered', () => {
+    test('Then, It should displayed loading component,', () => {
       document.body.innerHTML = BillsUI({ loading: true })
       expect(screen.getAllByText('Loading...')).toBeTruthy()
     })
   })
 
   describe('When I am on Bills page but back-end send an error message', () => {
-    test('Then, Error page should be rendered', () => {
+    test('Then, an error page should be rendered', () => {
       document.body.innerHTML = BillsUI({ error: 'some error message' })
       expect(screen.getAllByText('Erreur')).toBeTruthy()
     })
@@ -124,7 +124,7 @@ describe("Given I am connected as an employee", () => {
 // Integration test (GET method)
 describe('Given I am connected as an employee', () => {
   describe('When I am on Bills Page', () => {
-    test('Then I should fetch bills, on GET, from the mock API', async () => {
+    test('Then I should get bills datas, from the mock API', async () => {
       localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
       const root = document.createElement("div")
       root.setAttribute("id", "root")
@@ -155,7 +155,7 @@ describe('Given I am connected as an employee', () => {
         document.body.appendChild(root)
         router()
       })
-      test("fetches bills from an API and fails with 404 message error", async () => {
+      test("fetches bills from a mocked API and fails with 404 message error", async () => {
         mockStore.bills.mockImplementationOnce(() => {
           return {
             list: () => {
@@ -169,7 +169,7 @@ describe('Given I am connected as an employee', () => {
         expect(message).toBeTruthy()
       })
 
-      test("fetches messages from an API and fails with 500 message error", async () => {
+      test("fetches messages from a mocked API and fails with 500 message error", async () => {
         mockStore.bills.mockImplementationOnce(() => {
           return {
             list: () => {

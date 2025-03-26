@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 import { screen, fireEvent, waitFor } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
@@ -23,7 +22,7 @@ describe('Given I am connected as an employee', () => {
       document.body.innerHTML = `<div id="root"></div>`
     })
 
-    test('Then it should render NewBill page', () => {
+    test('Then it should displayed NewBill page title', () => {
       const html = NewBillUI()
       document.body.innerHTML = html
       expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy()
@@ -53,7 +52,7 @@ describe('Given I am connected as an employee', () => {
   })
 
   describe('When I am on NewBill Page, I do fill all required fields,', () => {
-    test('Then it should submit the form.', () => {
+    test('Then it should submit the form with values indicated in the form fields.', () => {
       document.body.innerHTML = NewBillUI()
       const form = screen.getByTestId("form-new-bill")
 
@@ -85,7 +84,7 @@ describe('Given I am connected as an employee', () => {
   })
 
   describe("When I select a file with an incorrect extension", () => {
-    test("Then It should delete this file.", () => {
+    test("Then this file should be deleted.", () => {
       const html = NewBillUI();
       document.body.innerHTML = html;
       const onNavigate = (pathname) => {
@@ -114,12 +113,8 @@ describe('Given I am connected as an employee', () => {
     });
   });
 
-  /* // test form submission, with empty fields
-  describe('When I submit new bill form with empty fields', () => { // should stay on same page
-    test('Then It should ', () => { })
-  }) */
-  describe('When I am on NewBill Page, I do fill file field and I upload a file with a png extention. ', () => {
-    test('Then it should ....', () => {
+  describe('When I am on NewBill page, I fill in every field on the form & I select a file with a correct extention, to be uploaded,', () => {
+    test('Then it should submit the form with the uploaded file', () => {
       document.body.innerHTML = NewBillUI()
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES_PATH[pathname]
@@ -147,9 +142,10 @@ describe('Given I am connected as an employee', () => {
 })
 
 // integration tests POST 
-describe('Given I am connected as an employee & I am on NewBill Page', () => {
-  describe("When new bill's form is submited", () => {
-    test('Then create new bill from mock API POST', async () => {
+describe('Given I am connected as an employee,', () => {
+  describe("When I am on the NewBill page, I have filled in every required fields & I submit this form,", () => {
+    // test-"Puis Il devrait renvoyer les données que j'ai envoyé avec la soumission du formulaire"
+    test("Then It should fetch datas I have post since form's submission,", async () => {
       const bill = [
         {
           id: "47qAXb6fIm2zOKkLzMro",
@@ -213,77 +209,5 @@ describe('Given I am connected as an employee & I am on NewBill Page', () => {
         });
       });
     });
-
-
   })
-  /* describe('When I fill the form, submit it & create a new bill', () => {
-    test('Then it should post new bill datas', () => {
-      document.body.innerHTML = NewBillUI()
-      // init. datas to create a new bill
-      const datasToFilled = {
-        type: "Transports",
-        name: "test",
-        datepicker: "2022-06-27",
-        amount: "76",
-        vat: "70",
-        pct: "20",
-        commentary: "test",
-        file: new File(["test"], "test.png", { type: "image/png" }),
-      };
-
-      // get the form elements by data-attributs ("data-testid")
-      const formNewBill = screen.getByTestId("form-new-bill");
-      const selectExpenseType = screen.getByTestId("expense-type");
-      const inputExpenseName = screen.getByTestId("expense-name");
-      const inputDatepicker = screen.getByTestId("datepicker");
-      const inputAmount = screen.getByTestId("amount");
-      const inputVat = screen.getByTestId("vat");
-      const inputPct = screen.getByTestId("pct");
-      const inputCommentary = screen.getByTestId("commentary");
-      const inputFile = screen.getByTestId("file");
-
-      // fill the form with datas
-      fireEvent.change(selectExpenseType, { target: { value: datasToFilled.type } });
-      fireEvent.change(inputExpenseName, { target: { value: datasToFilled.name } });
-      fireEvent.change(inputDatepicker, { target: { value: datasToFilled.datepicker } });
-      fireEvent.change(inputAmount, { target: { value: datasToFilled.amount } });
-      fireEvent.change(inputVat, { target: { value: datasToFilled.vat } });
-      fireEvent.change(inputPct, { target: { value: datasToFilled.pct } });
-      fireEvent.change(inputCommentary, { target: { value: datasToFilled.commentary } });
-      //fireEvent.change(inputFile, { target: { files: [datasToFilled.file] } });
-      userEvent.upload(inputFile, datasToFilled.file);
-
-      expect(selectExpenseType.value).toBe(datasToFilled.type);
-      expect(inputExpenseName.value).toBe(datasToFilled.name);
-      expect(inputDatepicker.value).toBe(datasToFilled.datepicker);
-      expect(inputAmount.value).toBe(datasToFilled.amount);
-      expect(inputVat.value).toBe(datasToFilled.vat);
-      expect(inputPct.value).toBe(datasToFilled.pct);
-      expect(inputCommentary.value).toBe(datasToFilled.commentary);
-      expect(inputFile.files[0]).toStrictEqual(datasToFilled.file);
-      expect(inputFile.files).toHaveLength(1);
-
-      // to filled localStorage with form datas
-      Object.defineProperty(window, 'localStorage', {
-        value: {
-          getItem: jest.fn(() => JSON.stringify({ email: 'email@test.com' }))
-        }
-      })
-      // simulate navigation
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
-
-      const newBill = new NewBill({
-        document,
-        onNavigate,
-        store,
-        localStorage: window.localStorage,
-      })
-      const handleSubmit = jest.fn(newBill.handleSubmit)
-      formNewBill.addEventListener('submit', handleSubmit)
-      fireEvent.submit(formNewBill)
-      expect(handleSubmit).toHaveBeenCalled()
-    })
-  }) */
 })       
