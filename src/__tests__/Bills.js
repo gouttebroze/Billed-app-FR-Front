@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getAllByTestId, getByTestId, screen, waitFor } from "@testing-library/dom"
+import { getAllByTestId, getByTestId, screen, waitFor, fireEvent } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
@@ -19,6 +19,38 @@ jest.mock("../app/store", () => mockStore)
 
 describe("Given I am connected as an employee", () => {
 
+  describe("When I click on icon eye", () => {
+    test('Then the modal is open', () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+      const html = BillsUI({ data: bills })
+      document.body.innerHTML = html
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      }
+
+      const billsContainer = new Bills({
+        document,
+        onNavigate,
+        store: null,
+        localStorage: localStorageMock,
+      })
+      const iconEye = screen.getAllByTestId('icon-eye')[0]
+      $.fn.modal = jest.fn()
+      const handleIconEyeClick = jest.fn(() => {
+        billsContainer.handleClickIconEye
+      })
+      iconEye.addEventListener('click', handleIconEyeClick)
+      fireEvent.click(iconEye)
+      expect(handleIconEyeClick).toHaveBeenCalled()
+
+      expect($.fn.modal).toHaveBeenCalled()
+    });
+  })
+
   // test code implementation to fix issue describe on kanban (add missed imports & fix errors on attributs writting)
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
@@ -31,8 +63,8 @@ describe("Given I am connected as an employee", () => {
       document.body.append(root)
       router()
       window.onNavigate(ROUTES_PATH.Bills)
-      await waitFor(() => screen.getByTestId('icon-window'))
-      const windowIcon = screen.getByTestId('icon-window')
+      await waitFor(() => screen.getAllByTestId('icon-window')[0])
+      const windowIcon = screen.getAllByTestId('icon-window')[0]
 
       // todo on this test part: implement expect test part
       expect(windowIcon).toHaveClass('active-icon')

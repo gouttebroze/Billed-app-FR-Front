@@ -75,8 +75,8 @@ describe('Given I am connected as an employee', () => {
       expect(parseInt(inputPct.value)).toBe(20);
 
       const inputFile = screen.getByTestId("file")
-      fireEvent.change(inputFile, { target: { files: [new File(["fileToUpload"], "fileToUpload.pdf", { type: "application/pdf" })] } })
-      expect(inputFile.files[0].name).toBe("fileToUpload.pdf");
+      fireEvent.change(inputFile, { target: { files: [new File(["fileToUpload"], "fileToUpload.png", { type: "application/png" })] } })
+      expect(inputFile.files[0].name).toBe("fileToUpload.png");
 
       const handleSubmit = jest.fn((e) => e.preventDefault())
       form.addEventListener("submit", handleSubmit)
