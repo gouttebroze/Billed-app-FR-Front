@@ -12,7 +12,6 @@ import store from '../__mocks__/store.js'
 import mockStore from '../__mocks__/store'
 import { bills } from "../fixtures/bills"
 import router from "../app/Router.js"
-import userEvent from "@testing-library/user-event"
 
 jest.mock("../app/store", () => mockStore)
 
@@ -53,8 +52,8 @@ describe('Given I am connected as an employee', () => {
     });
   })
 
-  describe('When I am on NewBill Page, I do fill all required fields and I submit the form', () => {
-    test('Then it should submit the form and renders Bills page.', () => {
+  describe('When I am on NewBill Page, I do fill all required fields,', () => {
+    test('Then it should submit the form.', () => {
       document.body.innerHTML = NewBillUI()
       const form = screen.getByTestId("form-new-bill")
 
@@ -86,7 +85,7 @@ describe('Given I am connected as an employee', () => {
   })
 
   describe("When I select a file with an incorrect extension", () => {
-    test("Then the bill is deleted", () => {
+    test("Then It should delete this file.", () => {
       const html = NewBillUI();
       document.body.innerHTML = html;
       const onNavigate = (pathname) => {
@@ -115,11 +114,10 @@ describe('Given I am connected as an employee', () => {
     });
   });
 
-  // test form submission, with empty fields
-  describe('When I am on NewBill Page & I submit the form with empty fields', () => {
-    // should stay on same page
+  /* // test form submission, with empty fields
+  describe('When I submit new bill form with empty fields', () => { // should stay on same page
     test('Then It should ', () => { })
-  })
+  }) */
   describe('When I am on NewBill Page, I do fill file field and I upload a file with a png extention. ', () => {
     test('Then it should ....', () => {
       document.body.innerHTML = NewBillUI()

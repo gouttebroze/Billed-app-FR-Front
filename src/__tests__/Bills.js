@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getAllByTestId, getByTestId, screen, waitFor, fireEvent } from "@testing-library/dom"
+import { screen, waitFor, fireEvent } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
@@ -12,7 +12,6 @@ import router from "../app/Router.js";
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect'
 import Bills, { getBills } from '../containers/Bills.js'
-import NewBillUI from "../views/NewBillUI.js";
 
 /***** use getAllByTestId pr récupérer pluieurs élément (ici, la liste des notes de frais) *******/
 jest.mock("../app/store", () => mockStore)
@@ -46,7 +45,6 @@ describe("Given I am connected as an employee", () => {
       iconEye.addEventListener('click', handleIconEyeClick)
       fireEvent.click(iconEye)
       expect(handleIconEyeClick).toHaveBeenCalled()
-
       expect($.fn.modal).toHaveBeenCalled()
     });
   })
@@ -78,17 +76,33 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
-
   })
-  describe("When I am on Bills Page and I click on 'Nouvelle note de frais' button", () => {
-    test('Then, It should renders NewBill page', () => {
+
+  describe("When I am on Bills Page and I click on new bill's button", () => {
+    test('Then, It should call handleClickNewBill method,', () => {
+      //, It should renders the new bill page
       document.body.innerHTML = BillsUI({ data: bills })
       const handleClickNewBill = jest.fn((e) => e.preventDefault)
       const newBill = screen.getByTestId('btn-new-bill')
       newBill.addEventListener('click', handleClickNewBill)
       userEvent.click(newBill)
       expect(handleClickNewBill).toHaveBeenCalled()
-      //expect(screen.getBy...t()).toBeTruthy()
+    })
+
+    test('Then, It should renders the new bill page', () => {
+      document.body.innerHTML = BillsUI({ data: bills })
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      const billsContainer = new Bills({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: localStorageMock,
+      })
+      const newBill = screen.getByTestId('btn-new-bill')
+      userEvent.click(newBill)
+      expect(screen.getByTestId('form-new-bill')).toBeTruthy()
     })
   })
 
@@ -98,28 +112,19 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText('Loading...')).toBeTruthy()
     })
   })
+
   describe('When I am on Bills page but back-end send an error message', () => {
     test('Then, Error page should be rendered', () => {
       document.body.innerHTML = BillsUI({ error: 'some error message' })
       expect(screen.getAllByText('Erreur')).toBeTruthy()
     })
   })
-
-  // test click sur icon oeil pr afficher modale avec justificatifs de la note de frais
-  /* describe('When I click on the icon eye', () => {
-    test('A modal should open', async () => {
-
-
-    })
-  }) */
 })
 
-// TODO : test d'intégration GET
+// Integration test (GET method)
 describe('Given I am connected as an employee', () => {
   describe('When I am on Bills Page', () => {
-
-    // test bills array length, from mocks datas, here, we expected 4 bills to be returned & displayed
-    test('Then I should fetch bills from the mock API GET', async () => {
+    test('Then I should fetch bills, on GET, from the mock API', async () => {
       localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
       const root = document.createElement("div")
       root.setAttribute("id", "root")
@@ -135,6 +140,7 @@ describe('Given I am connected as an employee', () => {
     })
 
     describe('When an error occurs on API', () => {
+      // test form submission 
       beforeEach(() => {
         jest.spyOn(mockStore, "bills")
         Object.defineProperty(
@@ -149,7 +155,6 @@ describe('Given I am connected as an employee', () => {
         document.body.appendChild(root)
         router()
       })
-
       test("fetches bills from an API and fails with 404 message error", async () => {
         mockStore.bills.mockImplementationOnce(() => {
           return {
@@ -172,30 +177,11 @@ describe('Given I am connected as an employee', () => {
             }
           }
         })
-
         window.onNavigate(ROUTES_PATH.Bills)
         await new Promise(process.nextTick);
         const message = await screen.getByText(/Erreur 500/)
         expect(message).toBeTruthy()
       })
-
-      /** 
-       *  try this tests on errors codes 
-       */
-      /* 
-      test("Then it fails with a 404 error", async () => {
-        const html = BillsUI({ error: "Erreur 404" });
-        document.body.innerHTML = html;
-        const message = await screen.getByText(/Erreur 404/);
-        expect(message).toBeTruthy();
-      });
-
-      test("Then it fails with a 500 error", async () => {
-        const html = BillsUI({ error: "Erreur 500" });
-        document.body.innerHTML = html;
-        const message = await screen.getByText(/Erreur 500/);
-        expect(message).toBeTruthy();
-      }); */
     })
   })
 })
